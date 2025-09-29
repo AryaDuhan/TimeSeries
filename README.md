@@ -24,10 +24,10 @@ The app provides a **side-by-side comparison** of the LSTM and Prophet models, a
   </tr>
   <tr>
     <td>
-      <i>(Add a screenshot of your Streamlit sidebar here, e.g., `screenshots/dashboard_config.png`)</i>
+      <i></i>
     </td>
     <td>
-      <i>(Add a screenshot of your Streamlit prediction plot here, e.g., `screenshots/prediction_plot.png`)</i>
+      <i></i>
     </td>
   </tr>
 </table>
