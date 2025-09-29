@@ -122,6 +122,11 @@ def main():
     
     # Train LSTM
     model = train_lstm_model(X_train_tensor, y_train_tensor, HIDDEN_SIZE, LSTM_EPOCHS)
+
+    # Save the trained model for AAPL
+    if TICKER == 'AAPL':
+        torch.save(model.state_dict(), "aapl_lstm_model.pth")
+        print("\n=== AAPL LSTM Model Saved as aapl_lstm_model.pth ===")
     
     # LSTM Predictions
     print("\n=== Making LSTM Predictions ===")

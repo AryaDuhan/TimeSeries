@@ -9,6 +9,7 @@ from sklearn.metrics import mean_squared_error
 from prophet import Prophet
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+import os
 
 # Page configuration
 st.set_page_config(page_title="Stock Price Prediction", layout="wide", page_icon="📈")
@@ -80,6 +81,13 @@ def fetch_stock_data(ticker_symbol, start, end):
         st.error(f"Error fetching data: {str(e)}")
         return None
 
+# Function to load a pre-trained model
+def load_pretrained_model(model_path, hidden_size):
+    model = StockLSTM(hidden_layer_size=hidden_size)
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+    return model
+
 # Cache model training to avoid retraining on every interaction
 @st.cache_resource
 def train_lstm_model(_X_train_tensor, _y_train_tensor, hidden_size, epochs):
@@ -144,9 +152,17 @@ if st.sidebar.button("Run Prediction", type="primary"):
     X_test_tensor = torch.from_numpy(X_test).float()
     y_test_tensor = torch.from_numpy(y_test).float().unsqueeze(1)
     
-    # Train LSTM
-    st.subheader("🤖 Training LSTM Model")
-    model = train_lstm_model(X_train_tensor, y_train_tensor, hidden_size, lstm_epochs)
+    # Train or load LSTM model
+    st.subheader("🤖 Loading/Training LSTM Model")
+    model_path = "aapl_lstm_model.pth"
+    if ticker.upper() == 'AAPL' and os.path.exists(model_path):
+        with st.spinner("Loading pre-trained AAPL model..."):
+            model = load_pretrained_model(model_path, hidden_size)
+        st.success("✅ Pre-trained AAPL model loaded successfully!")
+    else:
+        with st.spinner("Training LSTM model..."):
+            model = train_lstm_model(X_train_tensor, y_train_tensor, hidden_size, lstm_epochs)
+        st.success("✅ LSTM model trained successfully!")
     
     # LSTM Predictions
     model.eval()
